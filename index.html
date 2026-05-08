@@ -447,7 +447,7 @@
   }
   .summary-card {
     border: 2px solid var(--ink);
-    background: #002a5c;
+    background: var(--ink);
     color: var(--paper);
     padding: 28px 28px 24px;
     position: relative;
@@ -479,6 +479,8 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
     padding: 10px 0;
     border-bottom: 1px solid rgba(255,255,255,0.15);
     font-size: 13px;
@@ -492,6 +494,7 @@
   .summary-line .v {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
+    text-align: right;
   }
   .summary-line.discount .v {
     color: var(--orange);
@@ -611,7 +614,7 @@
       <h1 style="margin-top:14px">Build your <em>Translation Package</em>.</h1>
     </div>
     <div class="hero-meta">
-      Volume discounts unlock at <span class="num">25 hrs</span> and scale to <span class="num">32% off</span> at 500.
+      Volume discounts unlock at <span class="num">25 hrs</span>.
     </div>
   </header>
 
@@ -629,33 +632,33 @@
         </div>
         <div class="opts" id="hours-opts">
           <button class="opt" data-hours="10" aria-pressed="false">
-            <span class="label">10 HRS</span>
+            <span class="label">10 Hours</span>
             <span class="sub">List rate</span>
           </button>
           <button class="opt" data-hours="25" aria-pressed="false">
             <span class="save">Save 5%</span>
-            <span class="label">25 HRS</span>
+            <span class="label">25 Hours</span>
             <span class="sub">Volume tier I</span>
           </button>
           <button class="opt" data-hours="50" aria-pressed="false">
             <span class="save">Save 10%</span>
-            <span class="label">50 HRS</span>
+            <span class="label">50 Hours</span>
             <span class="sub">+ Bonus features</span>
             <span class="badge">UNLOCK</span>
           </button>
           <button class="opt" data-hours="100" aria-pressed="false">
             <span class="save">Save 15%</span>
-            <span class="label">100 HRS</span>
+            <span class="label">100 Hours</span>
             <span class="sub">Volume tier III</span>
           </button>
           <button class="opt" data-hours="250" aria-pressed="false">
             <span class="save">Save 25%</span>
-            <span class="label">250 HRS</span>
+            <span class="label">250 Hours</span>
             <span class="sub">Volume tier IV</span>
           </button>
           <button class="opt" data-hours="500" aria-pressed="false">
             <span class="save">Save 32%</span>
-            <span class="label">500 HRS</span>
+            <span class="label">500 Hours</span>
             <span class="sub">Best value</span>
           </button>
         </div>
@@ -678,23 +681,23 @@
         </div>
         <div class="opts" id="users-opts">
           <button class="opt" data-users="50" aria-pressed="false">
-            <span class="label">UP TO 50</span>
+            <span class="label">Up to 50</span>
             <span class="sub">Small meetings</span>
           </button>
           <button class="opt" data-users="200" aria-pressed="false">
-            <span class="label">UP TO 200</span>
+            <span class="label">Up to 200</span>
             <span class="sub">Workshops</span>
           </button>
           <button class="opt" data-users="500" aria-pressed="false">
-            <span class="label">UP TO 500</span>
+            <span class="label">Up to 500</span>
             <span class="sub">Conferences</span>
           </button>
           <button class="opt" data-users="2500" aria-pressed="false">
-            <span class="label">UP TO 2,500</span>
+            <span class="label">Up to 2,500</span>
             <span class="sub">Large events</span>
           </button>
           <button class="opt" data-users="10000" aria-pressed="false">
-            <span class="label">UP TO 10,000</span>
+            <span class="label">Up to 10,000</span>
             <span class="sub">Mass events</span>
             <span class="badge">CUSTOM QUOTE</span>
           </button>
@@ -714,15 +717,15 @@
         </div>
         <div class="opts" id="langs-opts" style="grid-template-columns: repeat(3, 1fr);">
           <button class="opt" data-lang="captions" aria-pressed="false" style="min-height:108px">
-            <span class="label">CAPTIONS</span>
+            <span class="label">Captions</span>
             <span class="sub">Same-language captions, e.g. English speech → English text</span>
           </button>
           <button class="opt" data-lang="two_lang" aria-pressed="false" style="min-height:108px">
-            <span class="label">TWO LANGS</span>
+            <span class="label">Two Languages</span>
             <span class="sub">e.g. French speech → English text or audio</span>
           </button>
           <button class="opt" data-lang="all_lang" aria-pressed="false" style="min-height:108px">
-            <span class="label">ALL LANGS</span>
+            <span class="label">All Languages</span>
             <span class="sub">60+ languages translated simultaneously</span>
           </button>
         </div>
@@ -858,7 +861,6 @@
           For audiences over 2,500, pricing is custom. Let's <span>talk it through.</span>
         </div>
 
-        <button class="cta" id="cta-btn" type="button">Request final quote →</button>
         <div class="summary-foot">
           Estimate only. Final pricing confirmed by your account team. All prices in USD.
         </div>
@@ -1039,10 +1041,9 @@
   function render() {
     const r = calculate();
     const card = document.getElementById('summary-card');
-    const cta = document.getElementById('cta-btn');
 
     // Configuration label
-    const langLabel = { captions: 'Captions', two_lang: 'Two languages', all_lang: 'All languages' }[state.languages];
+    const langLabel = { captions: 'Captions', two_lang: 'Two Languages', all_lang: 'All Languages' }[state.languages];
     const userLabel = state.users >= 999999 ? '10,000+ users'
                     : state.users >= 10000 ? 'Up to 10,000 users'
                     : `Up to ${state.users.toLocaleString()} users`;
@@ -1060,14 +1061,10 @@
       document.getElementById('sum-rate').textContent = '— Custom —';
       document.getElementById('sum-vol-disc').textContent = '—';
       document.getElementById('sum-translation').textContent = '—';
-      cta.textContent = 'Contact sales →';
-      cta.classList.add('contact');
       return;
     }
 
     card.classList.remove('contact-mode');
-    cta.classList.remove('contact');
-    cta.textContent = 'Request final quote →';
 
     // Rate row
     const isSpecial10 = (state.hours === 10 && state.languages === 'two_lang' && state.users === 50);
