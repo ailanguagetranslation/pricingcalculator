@@ -603,6 +603,93 @@
     font-family: 'JetBrains Mono', monospace;
   }
   footer span { color: var(--orange); }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 640px) {
+    /* Tighter outer padding */
+    .wrap {
+      padding: 20px 14px 60px;
+    }
+
+    /* Hero stacks vertically */
+    header.hero {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 22px 20px;
+      gap: 14px;
+    }
+    .hero-meta {
+      text-align: left;
+      max-width: 100%;
+      font-size: 12px;
+    }
+
+    /* Step section padding tighter */
+    section.step {
+      padding: 22px 18px 24px;
+    }
+
+    /* Step header allows wrap so step-sub doesn't cramp */
+    .step-head {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .step-sub {
+      margin-left: 0;
+      width: 100%;
+      font-size: 12px;
+    }
+
+    /* Custom hours row stacks on small screens */
+    .custom-row {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .custom-row input[type="number"] {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+    .custom-row .hint {
+      flex: 1 1 100%;
+    }
+
+    /* Onsite row - clean wrap */
+    #addon-onsite .addon-foot {
+      gap: 14px !important;
+    }
+
+    /* Summary card on mobile: drop sticky, soften padding */
+    aside.summary {
+      position: static;
+    }
+    .summary-card {
+      padding: 24px 22px 22px;
+    }
+    .summary-card::before {
+      inset: 4px -4px -4px 4px;
+    }
+    .price {
+      font-size: 40px;
+    }
+    .summary-card h2 {
+      font-size: 24px;
+    }
+
+    /* Discount row stacks gracefully */
+    .discount-row {
+      padding: 14px 16px;
+    }
+  }
+
+  /* Very narrow phones (<400px): hero block decoration gets in the way */
+  @media (max-width: 400px) {
+    header.hero::after {
+      inset: 4px -4px -4px 4px;
+    }
+    .opts { gap: 8px; }
+    .opt { padding: 14px 12px; min-height: 76px; }
+    .opt .label { font-size: 16px; }
+  }
 </style>
 </head>
 <body>
