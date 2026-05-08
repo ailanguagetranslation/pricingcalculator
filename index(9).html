@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pricing Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #017CFF;
+    --blue-deep: #0064cf;
+    --orange: #FF8631;
+    --orange-deep: #e96a14;
+    --ink: #0a0a0a;
+    --paper: #ffffff;
+    --line: #0a0a0a;
+    --soft: #f4f4f0;
+    --muted: #6b6b6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image:
+      linear-gradient(to right, rgba(10,10,10,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(10,10,10,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header.hero {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    position: relative;
+  }
+  header.hero::after {
+    content: "";
+    position: absolute;
+    inset: 6px -6px -6px 6px;
+    background: var(--blue);
+    z-index: -1;
+  }
+  .brand {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand .dot {
+    width: 10px; height: 10px;
+    background: var(--orange);
+    display: inline-block;
+  }
+  h1 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--blue);
+    font-family: 'Bricolage Grotesque', serif;
+  }
+  .hero-meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 220px;
+  }
+  .hero-meta .num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section.step {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 28px 28px 32px;
+    margin-bottom: 20px;
+  }
+  .step-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 22px;
+    border-bottom: 1px dashed var(--ink);
+    padding-bottom: 14px;
+  }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4px 8px;
+    letter-spacing: 0.05em;
+  }
+  .step-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .step-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ---------- OPTION GRID ---------- */
+  .opts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 640px) {
+    .opts { grid-template-columns: repeat(2, 1fr); }
+  }
+  .opt {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease, color 0.15s ease;
+    position: relative;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 84px;
+  }
+  .opt:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .opt[aria-pressed="true"] {
+    background: var(--blue);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .opt[aria-pressed="true"] .save {
+    background: var(--orange);
+    color: var(--ink);
+  }
+  .opt .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .opt .sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .opt[aria-pressed="true"] .sub { color: rgba(255,255,255,0.85); }
+  .opt .save {
+    position: absolute;
+    top: -9px;
+    right: 10px;
+    background: var(--orange);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border: 2px solid var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .opt .badge {
+    position: absolute;
+    bottom: -9px;
+    left: 10px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- CUSTOM INPUT ---------- */
+  .custom-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--ink);
+  }
+  .custom-row label {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .custom-row input[type="number"] {
+    flex: 1;
+    max-width: 200px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+  }
+  .custom-row input[type="number"]:focus {
+    background: #fffbe6;
+  }
+  .custom-row .hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ---------- ADD-ON CARDS ---------- */
+  .addons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 640px) { .addons { grid-template-columns: 1fr; } }
+  .addon {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .addon[data-active="true"] {
+    background: #fff5ec;
+  }
+  .addon-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .addon-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  .addon-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+  .addon-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .addon-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-top: 6px;
+  }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .toggle input { display: none; }
+  .toggle .box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .toggle input:checked + .box {
+    background: var(--orange);
+  }
+  .toggle input:checked + .box::after {
+    content: "✓";
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .qty-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .qty-row input {
+    width: 70px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 8px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    text-align: center;
+    outline: none;
+  }
+  .qty-row label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  details.more {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+  details.more summary {
+    cursor: pointer;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  details.more summary:hover { color: var(--orange); }
+  details.more ul {
+    margin-top: 8px;
+    padding-left: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  details.more ul li { margin-bottom: 3px; }
+
+  /* ---------- DISCOUNT CHECKBOX ---------- */
+  .discount-row {
+    border: 2px solid var(--ink);
+    padding: 16px 18px;
+    background: var(--paper);
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .discount-row[data-active="true"] {
+    background: #eaf3ff;
+  }
+  .discount-row .text strong {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 15px;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .discount-row .text small {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ---------- UNLOCK BANNER ---------- */
+  .unlock {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: var(--orange);
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .unlock[data-show="true"] { display: flex; }
+  .unlock .star {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /* ---------- SUMMARY (right column) ---------- */
+  aside.summary {
+    position: sticky;
+    top: 20px;
+  }
+  .summary-card {
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 28px 24px;
+    position: relative;
+  }
+  .summary-card::before {
+    content: "";
+    position: absolute;
+    inset: 6px -6px -6px 6px;
+    background: var(--orange);
+    z-index: -1;
+  }
+  .summary-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 14px;
+  }
+  .summary-card h2 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: 13px;
+  }
+  .summary-line.sub {
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    padding: 6px 0;
+    border: none;
+  }
+  .summary-line .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+  .summary-line.discount .v {
+    color: var(--orange);
+  }
+  .price-block {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255,255,255,0.4);
+  }
+  .price-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 4px;
+  }
+  .price {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--paper);
+  }
+  .price small {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-left: 6px;
+    letter-spacing: 0;
+  }
+  .per-hour {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+  .per-hour b {
+    color: var(--paper);
+    font-weight: 600;
+  }
+  .cta {
+    width: 100%;
+    margin-top: 22px;
+    background: var(--orange);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: transform 0.08s, background 0.15s;
+  }
+  .cta:hover {
+    background: var(--paper);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .cta.contact {
+    background: var(--blue);
+    color: var(--paper);
+  }
+  .cta.contact:hover {
+    background: var(--paper);
+    color: var(--blue);
+  }
+  .summary-foot {
+    margin-top: 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Contact sales mode */
+  .summary-card.contact-mode .price-block { display: none; }
+  .summary-card .contact-msg { display: none; }
+  .summary-card.contact-mode .contact-msg {
+    display: block;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255,255,255,0.4);
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--paper);
+  }
+  .summary-card.contact-mode .contact-msg span {
+    color: var(--orange);
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(10,10,10,0.15);
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  footer span { color: var(--orange); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <div class="brand"><span class="dot"></span> Pricing Calculator</div>
+      <h1 style="margin-top:14px">Build your <em>quote</em>.</h1>
+    </div>
+    <div class="hero-meta">
+      Volume discounts unlock at <span class="num">25 hrs</span> and scale to <span class="num">32% off</span> at 500.
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- LEFT COLUMN: STEPS -->
+    <main>
+
+      <!-- STEP 1: HOURS -->
+      <section class="step" id="step-hours">
+        <div class="step-head">
+          <span class="step-num">01</span>
+          <span class="step-title">How many hours of translation?</span>
+          <span class="step-sub">Volume = bigger discount</span>
+        </div>
+        <div class="opts" id="hours-opts">
+          <button class="opt" data-hours="10" aria-pressed="false">
+            <span class="label">10 HRS</span>
+            <span class="sub">List rate</span>
+          </button>
+          <button class="opt" data-hours="25" aria-pressed="false">
+            <span class="save">Save 5%</span>
+            <span class="label">25 HRS</span>
+            <span class="sub">Volume tier I</span>
+          </button>
+          <button class="opt" data-hours="50" aria-pressed="false">
+            <span class="save">Save 10%</span>
+            <span class="label">50 HRS</span>
+            <span class="sub">+ Bonus features</span>
+            <span class="badge">UNLOCK</span>
+          </button>
+          <button class="opt" data-hours="100" aria-pressed="false">
+            <span class="save">Save 15%</span>
+            <span class="label">100 HRS</span>
+            <span class="sub">Volume tier III</span>
+          </button>
+          <button class="opt" data-hours="250" aria-pressed="false">
+            <span class="save">Save 25%</span>
+            <span class="label">250 HRS</span>
+            <span class="sub">Volume tier IV</span>
+          </button>
+          <button class="opt" data-hours="500" aria-pressed="false">
+            <span class="save">Save 32%</span>
+            <span class="label">500 HRS</span>
+            <span class="sub">Best value</span>
+          </button>
+        </div>
+        <div class="custom-row">
+          <label for="custom-hours">Or custom →</label>
+          <input type="number" id="custom-hours" min="1" placeholder="e.g. 175" />
+          <span class="hint">discount applied automatically</span>
+        </div>
+        <div class="unlock" id="unlock-banner">
+          <span class="star">✦</span>
+          <span>Unlocked at 50+ hrs: transcript translation, voice transcripts &amp; AI summaries</span>
+        </div>
+      </section>
+
+      <!-- STEP 2: AUDIENCE -->
+      <section class="step" id="step-users">
+        <div class="step-head">
+          <span class="step-num">02</span>
+          <span class="step-title">How many simultaneous attendees?</span>
+        </div>
+        <div class="opts" id="users-opts">
+          <button class="opt" data-users="50" aria-pressed="false">
+            <span class="label">UP TO 50</span>
+            <span class="sub">Small meetings</span>
+          </button>
+          <button class="opt" data-users="200" aria-pressed="false">
+            <span class="label">UP TO 200</span>
+            <span class="sub">Workshops</span>
+          </button>
+          <button class="opt" data-users="500" aria-pressed="false">
+            <span class="label">UP TO 500</span>
+            <span class="sub">Conferences</span>
+          </button>
+          <button class="opt" data-users="2500" aria-pressed="false">
+            <span class="label">UP TO 2,500</span>
+            <span class="sub">Large events</span>
+          </button>
+          <button class="opt" data-users="10000" aria-pressed="false">
+            <span class="label">UP TO 10,000</span>
+            <span class="sub">Mass events</span>
+            <span class="badge">CUSTOM QUOTE</span>
+          </button>
+          <button class="opt" data-users="999999" aria-pressed="false">
+            <span class="label">10,000+</span>
+            <span class="sub">Stadium-scale</span>
+            <span class="badge">CUSTOM QUOTE</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 3: LANGUAGES -->
+      <section class="step" id="step-langs">
+        <div class="step-head">
+          <span class="step-num">03</span>
+          <span class="step-title">Language requirements</span>
+        </div>
+        <div class="opts" id="langs-opts" style="grid-template-columns: repeat(3, 1fr);">
+          <button class="opt" data-lang="captions" aria-pressed="false" style="min-height:108px">
+            <span class="label">CAPTIONS</span>
+            <span class="sub">Same-language captions, e.g. English speech → English text</span>
+          </button>
+          <button class="opt" data-lang="two_lang" aria-pressed="false" style="min-height:108px">
+            <span class="label">TWO LANGS</span>
+            <span class="sub">e.g. French speech → English text or audio</span>
+          </button>
+          <button class="opt" data-lang="all_lang" aria-pressed="false" style="min-height:108px">
+            <span class="label">ALL LANGS</span>
+            <span class="sub">60+ languages translated simultaneously</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 4: ADD-ONS -->
+      <section class="step" id="step-addons">
+        <div class="step-head">
+          <span class="step-num">04</span>
+          <span class="step-title">Optional add-ons</span>
+          <span class="step-sub">Mix &amp; match</span>
+        </div>
+        <div class="addons">
+          <!-- Onboarding -->
+          <div class="addon" id="addon-onboarding">
+            <div class="addon-top">
+              <div class="addon-name">Onboarding</div>
+              <div class="addon-price">$500</div>
+            </div>
+            <div class="addon-desc">Setup, training &amp; testing with a Client Success Specialist. Recommended for first-time users.</div>
+            <details class="more">
+              <summary>What's included</summary>
+              <ul>
+                <li>Onboarding session (45 min)</li>
+                <li>Account setup &amp; portal walkthrough</li>
+                <li>Session creation &amp; configuration</li>
+                <li>Integration setup for your platform</li>
+                <li>Switching languages during live sessions</li>
+                <li>Best practices &amp; glossary development</li>
+                <li>Live testing session (up to 60 min)</li>
+              </ul>
+            </details>
+            <div class="addon-foot">
+              <label class="toggle">
+                <input type="checkbox" id="cb-onboarding">
+                <span class="box"></span>
+                Add to quote
+              </label>
+            </div>
+          </div>
+
+          <!-- Glossary -->
+          <div class="addon" id="addon-glossary">
+            <div class="addon-top">
+              <div class="addon-name">Assisted Glossary Creation</div>
+              <div class="addon-price">$500</div>
+            </div>
+            <div class="addon-desc">1 glossary, up to 3 languages, 500 terms each — built &amp; tested. <strong>Requires 4 weeks notice.</strong></div>
+            <details class="more">
+              <summary>What's included</summary>
+              <ul>
+                <li>1 glossary, up to 3 languages, 500 terms each</li>
+                <li>Keyword extraction from your supplied documents</li>
+                <li>Human and machine testing</li>
+                <li>Tested against up to 90 min of pre-recorded content</li>
+                <li>1 revision based on your feedback</li>
+              </ul>
+            </details>
+            <div class="addon-foot">
+              <label class="toggle">
+                <input type="checkbox" id="cb-glossary">
+                <span class="box"></span>
+                Add to quote
+              </label>
+            </div>
+          </div>
+
+          <!-- Onsite -->
+          <div class="addon" id="addon-onsite" style="grid-column: 1 / -1;">
+            <div class="addon-top">
+              <div class="addon-name">In-Person / Onsite Event Support</div>
+              <div class="addon-price">$180/hr · $1,440/day</div>
+            </div>
+            <div class="addon-desc">Pending availability. Travel &amp; accommodation billed separately.</div>
+            <div class="addon-foot" style="justify-content: flex-start; gap: 24px; flex-wrap: wrap;">
+              <div class="qty-row">
+                <input type="number" id="onsite-hours" min="0" value="0" />
+                <label for="onsite-hours">Hours</label>
+              </div>
+              <div class="qty-row">
+                <input type="number" id="onsite-days" min="0" value="0" />
+                <label for="onsite-days">Days <span style="text-transform:none">(8 hr each)</span></label>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Hours and days both add up.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5: NON-PROFIT -->
+      <section class="step" id="step-discount">
+        <div class="step-head">
+          <span class="step-num">05</span>
+          <span class="step-title">Discounts &amp; eligibility</span>
+        </div>
+        <div class="discount-row" id="discount-row">
+          <label class="toggle">
+            <input type="checkbox" id="cb-nonprofit">
+            <span class="box"></span>
+          </label>
+          <div class="text">
+            <strong>Non-profit, NGO, or educational organisation</strong>
+            <small>Adds an extra 10% off the full order (incl. add-ons) on packages of 25 hours or more.</small>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: SUMMARY -->
+    <aside class="summary">
+      <div class="summary-card" id="summary-card">
+        <div class="summary-eyebrow">Live Estimate</div>
+        <h2>Your quote</h2>
+
+        <div class="summary-line"><span>Configuration</span><span class="v" id="sum-config">—</span></div>
+        <div class="summary-line"><span>Hours</span><span class="v" id="sum-hours">—</span></div>
+        <div class="summary-line"><span>Hourly rate</span><span class="v" id="sum-rate">—</span></div>
+        <div class="summary-line sub"><span>Volume discount</span><span class="v" id="sum-vol-disc">—</span></div>
+        <div class="summary-line"><span>Translation subtotal</span><span class="v" id="sum-translation">$0</span></div>
+        <div class="summary-line" id="row-onboarding" style="display:none"><span>Onboarding</span><span class="v">+ $500</span></div>
+        <div class="summary-line" id="row-glossary" style="display:none"><span>Glossary creation</span><span class="v">+ $500</span></div>
+        <div class="summary-line" id="row-onsite" style="display:none"><span>Onsite support <small id="onsite-detail"></small></span><span class="v" id="sum-onsite">—</span></div>
+        <div class="summary-line discount" id="row-nonprofit" style="display:none"><span>Non-profit discount</span><span class="v" id="sum-np">—</span></div>
+
+        <div class="price-block" id="price-block">
+          <div class="price-label">Estimated total</div>
+          <div class="price"><span id="sum-total">$0</span><small>USD</small></div>
+          <div class="per-hour" id="per-hour-line" style="display:none">Effective rate: <b id="effective-rate">$0/hr</b></div>
+        </div>
+
+        <div class="contact-msg">
+          For audiences over 2,500, pricing is custom. Let's <span>talk it through.</span>
+        </div>
+
+        <button class="cta" id="cta-btn" type="button">Request final quote →</button>
+        <div class="summary-foot">
+          Estimate only. Final pricing confirmed by your account team. All prices in USD.
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer>
+    Built with sharp edges and brand colours <span>●</span> #017CFF <span>●</span> #FF8631
+  </footer>
+</div>
+
+<script>
+  // ---------- DATA ----------
+  // Base hourly rates (no volume discount applied) by [language][user-tier]
+  const RATES = {
+    captions:  { 50: 50, 200: 50, 500: 50, 2500: 50 },
+    two_lang:  { 50: 75, 200: 112.50, 500: 150, 2500: 175 },
+    all_lang:  { 50: 150, 200: 225, 500: 300, 2500: 450 }
+  };
+  // Special exception: 10 hrs × two_lang × up-to-50 = $95/hr (not the $75 base)
+  const SPECIAL_10HR = { two_lang: { 50: 95 } };
+
+  function volumeDiscount(hours) {
+    if (hours >= 500) return 0.32;
+    if (hours >= 250) return 0.25;
+    if (hours >= 100) return 0.15;
+    if (hours >= 50)  return 0.10;
+    if (hours >= 25)  return 0.05;
+    return 0;
+  }
+
+  // ---------- STATE ----------
+  const state = {
+    hours: 25,
+    customHours: false,
+    users: 50,
+    languages: 'two_lang',
+    onboarding: false,
+    glossary: false,
+    onsiteHours: 0,
+    onsiteDays: 0,
+    nonprofit: false
+  };
+
+  const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtRate = n => '$' + (Math.round(n*100)/100).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  // ---------- WIRING: HOURS ----------
+  document.querySelectorAll('#hours-opts .opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.hours = parseInt(btn.dataset.hours, 10);
+      state.customHours = false;
+      document.getElementById('custom-hours').value = '';
+      updateHoursUI();
+      render();
+    });
+  });
+  document.getElementById('custom-hours').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    if (!isNaN(v) && v > 0) {
+      state.hours = v;
+      state.customHours = true;
+    } else {
+      state.customHours = false;
+    }
+    updateHoursUI();
+    render();
+  });
+  function updateHoursUI() {
+    document.querySelectorAll('#hours-opts .opt').forEach(b => {
+      const isMatch = !state.customHours && parseInt(b.dataset.hours,10) === state.hours;
+      b.setAttribute('aria-pressed', isMatch);
+    });
+    // Unlock banner
+    document.getElementById('unlock-banner').setAttribute('data-show', state.hours >= 50);
+  }
+
+  // ---------- WIRING: USERS ----------
+  document.querySelectorAll('#users-opts .opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.users = parseInt(btn.dataset.users, 10);
+      updateUsersUI();
+      render();
+    });
+  });
+  function updateUsersUI() {
+    document.querySelectorAll('#users-opts .opt').forEach(b => {
+      b.setAttribute('aria-pressed', parseInt(b.dataset.users,10) === state.users);
+    });
+  }
+
+  // ---------- WIRING: LANGUAGES ----------
+  document.querySelectorAll('#langs-opts .opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.languages = btn.dataset.lang;
+      updateLangsUI();
+      render();
+    });
+  });
+  function updateLangsUI() {
+    document.querySelectorAll('#langs-opts .opt').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.lang === state.languages);
+    });
+  }
+
+  // ---------- WIRING: ADD-ONS ----------
+  document.getElementById('cb-onboarding').addEventListener('change', e => {
+    state.onboarding = e.target.checked;
+    document.getElementById('addon-onboarding').setAttribute('data-active', state.onboarding);
+    render();
+  });
+  document.getElementById('cb-glossary').addEventListener('change', e => {
+    state.glossary = e.target.checked;
+    document.getElementById('addon-glossary').setAttribute('data-active', state.glossary);
+    render();
+  });
+  document.getElementById('onsite-hours').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    state.onsiteHours = (!isNaN(v) && v > 0) ? v : 0;
+    document.getElementById('addon-onsite').setAttribute('data-active', state.onsiteHours + state.onsiteDays > 0);
+    render();
+  });
+  document.getElementById('onsite-days').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    state.onsiteDays = (!isNaN(v) && v > 0) ? v : 0;
+    document.getElementById('addon-onsite').setAttribute('data-active', state.onsiteHours + state.onsiteDays > 0);
+    render();
+  });
+  document.getElementById('cb-nonprofit').addEventListener('change', e => {
+    state.nonprofit = e.target.checked;
+    document.getElementById('discount-row').setAttribute('data-active', state.nonprofit);
+    render();
+  });
+
+  // ---------- CALCULATION ----------
+  function calculate() {
+    const contact = state.users > 2500;
+    if (contact) return { contact: true };
+
+    // Resolve hourly rate
+    let baseRate = RATES[state.languages][state.users];
+    let discount = volumeDiscount(state.hours);
+    let hourlyRate;
+
+    // Special: 10hrs + two_lang + up-to-50 = $95
+    if (state.hours === 10 && SPECIAL_10HR[state.languages] && SPECIAL_10HR[state.languages][state.users]) {
+      hourlyRate = SPECIAL_10HR[state.languages][state.users];
+    } else {
+      hourlyRate = baseRate * (1 - discount);
+    }
+
+    const translation = hourlyRate * state.hours;
+    const onboarding = state.onboarding ? 500 : 0;
+    const glossary = state.glossary ? 500 : 0;
+    const onsiteTotalHours = state.onsiteHours + (state.onsiteDays * 8);
+    const onsite = onsiteTotalHours * 180;
+
+    const subtotal = translation + onboarding + glossary + onsite;
+
+    // Non-profit discount: 10% off full order, only if 25+ hours
+    let npDiscount = 0;
+    if (state.nonprofit && state.hours >= 25) {
+      npDiscount = subtotal * 0.10;
+    }
+    const total = subtotal - npDiscount;
+
+    return {
+      contact: false,
+      baseRate, discount, hourlyRate,
+      translation, onboarding, glossary, onsite, onsiteTotalHours,
+      subtotal, npDiscount, total
+    };
+  }
+
+  // ---------- RENDER ----------
+  function render() {
+    const r = calculate();
+    const card = document.getElementById('summary-card');
+    const cta = document.getElementById('cta-btn');
+
+    // Configuration label
+    const langLabel = { captions: 'Captions', two_lang: 'Two languages', all_lang: 'All languages' }[state.languages];
+    const userLabel = state.users >= 999999 ? '10,000+ users'
+                    : state.users >= 10000 ? 'Up to 10,000 users'
+                    : `Up to ${state.users.toLocaleString()} users`;
+    document.getElementById('sum-config').textContent = `${langLabel} · ${userLabel}`;
+    document.getElementById('sum-hours').textContent = `${state.hours} hr${state.hours === 1 ? '' : 's'}`;
+
+    // Onsite info
+    const onsiteVisible = state.onsiteHours > 0 || state.onsiteDays > 0;
+    document.getElementById('row-onsite').style.display = onsiteVisible ? '' : 'none';
+    document.getElementById('row-onboarding').style.display = state.onboarding ? '' : 'none';
+    document.getElementById('row-glossary').style.display = state.glossary ? '' : 'none';
+
+    if (r.contact) {
+      card.classList.add('contact-mode');
+      document.getElementById('sum-rate').textContent = '— Custom —';
+      document.getElementById('sum-vol-disc').textContent = '—';
+      document.getElementById('sum-translation').textContent = '—';
+      cta.textContent = 'Contact sales →';
+      cta.classList.add('contact');
+      return;
+    }
+
+    card.classList.remove('contact-mode');
+    cta.classList.remove('contact');
+    cta.textContent = 'Request final quote →';
+
+    // Rate row
+    const isSpecial10 = (state.hours === 10 && state.languages === 'two_lang' && state.users === 50);
+    document.getElementById('sum-rate').textContent = `${fmtRate(r.hourlyRate)}/hr`;
+    if (r.discount > 0) {
+      document.getElementById('sum-vol-disc').textContent = `−${Math.round(r.discount*100)}% off ${fmtRate(r.baseRate)}`;
+    } else if (isSpecial10) {
+      document.getElementById('sum-vol-disc').textContent = `10-hr starter rate`;
+    } else {
+      document.getElementById('sum-vol-disc').textContent = `List rate`;
+    }
+    document.getElementById('sum-translation').textContent = fmt(r.translation);
+
+    // Onsite detail
+    if (onsiteVisible) {
+      const parts = [];
+      if (state.onsiteDays > 0) parts.push(`${state.onsiteDays} day${state.onsiteDays === 1 ? '' : 's'}`);
+      if (state.onsiteHours > 0) parts.push(`${state.onsiteHours} hr${state.onsiteHours === 1 ? '' : 's'}`);
+      document.getElementById('onsite-detail').textContent = `(${parts.join(' + ')} = ${r.onsiteTotalHours} hrs)`;
+      document.getElementById('sum-onsite').textContent = '+ ' + fmt(r.onsite);
+    }
+
+    // Non-profit
+    if (state.nonprofit) {
+      const row = document.getElementById('row-nonprofit');
+      if (state.hours >= 25) {
+        row.style.display = '';
+        document.getElementById('sum-np').textContent = '− ' + fmt(r.npDiscount);
+      } else {
+        row.style.display = '';
+        document.getElementById('sum-np').textContent = 'Needs 25+ hrs';
+      }
+    } else {
+      document.getElementById('row-nonprofit').style.display = 'none';
+    }
+
+    // Total
+    document.getElementById('sum-total').textContent = fmt(r.total);
+
+    // Effective per-hour (if there are addons or discounts)
+    const hasExtras = r.onboarding || r.glossary || r.onsite || r.npDiscount;
+    if (hasExtras && state.hours > 0) {
+      document.getElementById('per-hour-line').style.display = '';
+      document.getElementById('effective-rate').textContent = fmtRate(r.total / state.hours) + '/hr';
+    } else {
+      document.getElementById('per-hour-line').style.display = 'none';
+    }
+  }
+
+  // ---------- INIT ----------
+  function init() {
+    updateHoursUI();
+    updateUsersUI();
+    updateLangsUI();
+    render();
+  }
+  init();
+</script>
+</body>
+</html>
