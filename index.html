@@ -606,86 +606,31 @@
 
   /* ---------- MOBILE ---------- */
   @media (max-width: 640px) {
-    /* Tighter outer padding */
-    .wrap {
-      padding: 20px 14px 60px;
-    }
-
-    /* Hero stacks vertically */
+    .wrap { padding: 20px 14px 60px; }
     header.hero {
       flex-direction: column;
       align-items: flex-start;
       padding: 22px 20px;
       gap: 14px;
     }
-    .hero-meta {
-      text-align: left;
-      max-width: 100%;
-      font-size: 12px;
-    }
-
-    /* Step section padding tighter */
-    section.step {
-      padding: 22px 18px 24px;
-    }
-
-    /* Step header allows wrap so step-sub doesn't cramp */
-    .step-head {
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .step-sub {
-      margin-left: 0;
-      width: 100%;
-      font-size: 12px;
-    }
-
-    /* Custom hours row stacks on small screens */
-    .custom-row {
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .custom-row input[type="number"] {
-      max-width: 100%;
-      flex: 1 1 100%;
-    }
-    .custom-row .hint {
-      flex: 1 1 100%;
-    }
-
-    /* Onsite row - clean wrap */
-    #addon-onsite .addon-foot {
-      gap: 14px !important;
-    }
-
-    /* Summary card on mobile: drop sticky, soften padding */
-    aside.summary {
-      position: static;
-    }
-    .summary-card {
-      padding: 24px 22px 22px;
-    }
-    .summary-card::before {
-      inset: 4px -4px -4px 4px;
-    }
-    .price {
-      font-size: 40px;
-    }
-    .summary-card h2 {
-      font-size: 24px;
-    }
-
-    /* Discount row stacks gracefully */
-    .discount-row {
-      padding: 14px 16px;
-    }
+    .hero-meta { text-align: left; max-width: 100%; font-size: 12px; }
+    section.step { padding: 22px 18px 24px; }
+    .step-head { flex-wrap: wrap; gap: 10px; }
+    .step-sub { margin-left: 0; width: 100%; font-size: 12px; }
+    .custom-row { flex-wrap: wrap; gap: 10px; }
+    .custom-row input[type="number"] { max-width: 100%; flex: 1 1 100%; }
+    .custom-row .hint { flex: 1 1 100%; }
+    #addon-onsite .addon-foot { gap: 14px !important; }
+    aside.summary { position: static; }
+    .summary-card { padding: 24px 22px 22px; }
+    .summary-card::before { inset: 4px -4px -4px 4px; }
+    .price { font-size: 40px; }
+    .summary-card h2 { font-size: 24px; }
+    .discount-row { padding: 14px 16px; }
   }
 
-  /* Very narrow phones (<400px): hero block decoration gets in the way */
   @media (max-width: 400px) {
-    header.hero::after {
-      inset: 4px -4px -4px 4px;
-    }
+    header.hero::after { inset: 4px -4px -4px 4px; }
     .opts { gap: 8px; }
     .opt { padding: 14px 12px; min-height: 76px; }
     .opt .label { font-size: 16px; }
@@ -746,13 +691,16 @@
           <button class="opt" data-hours="500" aria-pressed="false">
             <span class="save">Save 32%</span>
             <span class="label">500 Hours</span>
-            <span class="sub">Best value</span>
+            <span class="sub">Best value · Unlock SSO &amp; Workspaces</span>
           </button>
         </div>
         <div class="custom-row">
           <label for="custom-hours">Or custom →</label>
           <input type="number" id="custom-hours" min="1" placeholder="e.g. 175" />
-          <span class="hint">discount applied automatically</span>
+          <span class="hint" id="custom-hint">discount applied automatically</span>
+        </div>
+        <div id="min-hours-warning" style="display:none; margin-top:10px; padding:10px 14px; background:#fff3cd; border:2px solid var(--ink); font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:var(--ink);">
+          ⚠ Minimum package is 10 hours. Please enter 10 or more.
         </div>
         <div class="unlock" id="unlock-banner">
           <span class="star">✦</span>
@@ -786,7 +734,6 @@
           <button class="opt" data-users="10000" aria-pressed="false">
             <span class="label">Up to 10,000</span>
             <span class="sub">Mass events</span>
-            <span class="badge">CUSTOM QUOTE</span>
           </button>
           <button class="opt" data-users="999999" aria-pressed="false">
             <span class="label">10,000+</span>
@@ -826,8 +773,8 @@
           <span class="step-sub">Mix &amp; match</span>
         </div>
         <div class="addons">
-          <!-- Onboarding -->
-          <div class="addon" id="addon-onboarding">
+          <!-- Onboarding — checked by default -->
+          <div class="addon" id="addon-onboarding" data-active="true">
             <div class="addon-top">
               <div class="addon-name">Onboarding</div>
               <div class="addon-price">$500</div>
@@ -847,7 +794,7 @@
             </details>
             <div class="addon-foot">
               <label class="toggle">
-                <input type="checkbox" id="cb-onboarding">
+                <input type="checkbox" id="cb-onboarding" checked>
                 <span class="box"></span>
                 Add to quote
               </label>
@@ -933,7 +880,7 @@
         <div class="summary-line"><span>Hourly rate</span><span class="v" id="sum-rate">—</span></div>
         <div class="summary-line sub"><span>Volume discount</span><span class="v" id="sum-vol-disc">—</span></div>
         <div class="summary-line"><span>Translation subtotal</span><span class="v" id="sum-translation">$0</span></div>
-        <div class="summary-line" id="row-onboarding" style="display:none"><span>Onboarding</span><span class="v">+ $500</span></div>
+        <div class="summary-line" id="row-onboarding"><span>Onboarding</span><span class="v">+ $500</span></div>
         <div class="summary-line" id="row-glossary" style="display:none"><span>Glossary creation</span><span class="v">+ $500</span></div>
         <div class="summary-line" id="row-onsite" style="display:none"><span>Onsite support <small id="onsite-detail"></small></span><span class="v" id="sum-onsite">—</span></div>
         <div class="summary-line discount" id="row-nonprofit" style="display:none"><span>Non-profit discount</span><span class="v" id="sum-np">—</span></div>
@@ -945,7 +892,7 @@
         </div>
 
         <div class="contact-msg">
-          For audiences over 2,500, pricing is custom. Let's <span>talk it through.</span>
+          For audiences over 10,000, pricing is custom. Let's <span>talk it through.</span>
         </div>
 
         <div class="summary-foot">
@@ -964,12 +911,35 @@
 <script>
   // ---------- DATA ----------
   // Base hourly rates (no volume discount applied) by [language][user-tier]
+  // For 10,000 tier, rates are fixed per hour-bracket (no separate volume discount logic needed)
   const RATES = {
-    captions:  { 50: 50, 200: 50, 500: 50, 2500: 50 },
-    two_lang:  { 50: 75, 200: 112.50, 500: 150, 2500: 175 },
-    all_lang:  { 50: 150, 200: 225, 500: 300, 2500: 450 }
+    captions:  { 50: 50,  200: 50,    500: 50,   2500: 50   },
+    two_lang:  { 50: 75,  200: 112.50, 500: 150,  2500: 175  },
+    all_lang:  { 50: 150, 200: 225,   500: 300,  2500: 450  }
   };
-  // Special exception: 10 hrs × two_lang × up-to-50 = $95/hr (not the $75 base)
+
+  // Fixed rates for up-to-10,000 tier keyed by hour bracket
+  // These are absolute dollar-per-hour values, not base × discount
+  const RATES_10K = {
+    two_lang: {
+      10:  250,   // 10–24 hrs
+      25:  237.50,
+      50:  225,
+      100: 212.50,
+      250: 187.50,
+      500: 170
+    },
+    all_lang: {
+      10:  600,   // 10–24 hrs
+      25:  570,
+      50:  540,
+      100: 510,
+      250: 450,
+      500: 408
+    }
+  };
+
+  // For tiers < 10,000: special exception for 10 hrs × two_lang × up-to-50
   const SPECIAL_10HR = { two_lang: { 50: 95 } };
 
   function volumeDiscount(hours) {
@@ -978,16 +948,27 @@
     if (hours >= 100) return 0.15;
     if (hours >= 50)  return 0.10;
     if (hours >= 25)  return 0.05;
-    return 0;
+    return 0; // No discount for < 25 hrs
+  }
+
+  // Resolve which bracket key to use for RATES_10K
+  function get10kBracket(hours) {
+    if (hours >= 500) return 500;
+    if (hours >= 250) return 250;
+    if (hours >= 100) return 100;
+    if (hours >= 50)  return 50;
+    if (hours >= 25)  return 25;
+    return 10; // 10–24 hrs
   }
 
   // ---------- STATE ----------
   const state = {
     hours: 25,
     customHours: false,
+    belowMin: false,
     users: 50,
     languages: 'two_lang',
-    onboarding: false,
+    onboarding: true,   // ON by default
     glossary: false,
     onsiteHours: 0,
     onsiteDays: 0,
@@ -1007,23 +988,34 @@
       render();
     });
   });
+
   document.getElementById('custom-hours').addEventListener('input', e => {
     const v = parseInt(e.target.value, 10);
+    const warning = document.getElementById('min-hours-warning');
     if (!isNaN(v) && v > 0) {
-      state.hours = v;
       state.customHours = true;
+      if (v < 10) {
+        warning.style.display = '';
+        state.belowMin = true;
+      } else {
+        warning.style.display = 'none';
+        state.belowMin = false;
+        state.hours = v;
+      }
     } else {
       state.customHours = false;
+      state.belowMin = false;
+      warning.style.display = 'none';
     }
     updateHoursUI();
     render();
   });
+
   function updateHoursUI() {
     document.querySelectorAll('#hours-opts .opt').forEach(b => {
       const isMatch = !state.customHours && parseInt(b.dataset.hours,10) === state.hours;
       b.setAttribute('aria-pressed', isMatch);
     });
-    // Unlock banner
     document.getElementById('unlock-banner').setAttribute('data-show', state.hours >= 50);
   }
 
@@ -1086,19 +1078,39 @@
 
   // ---------- CALCULATION ----------
   function calculate() {
-    const contact = state.users > 2500;
+    const contact = state.users > 10000;
     if (contact) return { contact: true };
 
-    // Resolve hourly rate
-    let baseRate = RATES[state.languages][state.users];
-    let discount = volumeDiscount(state.hours);
-    let hourlyRate;
+    let baseRate, discount, hourlyRate;
 
-    // Special: 10hrs + two_lang + up-to-50 = $95
-    if (state.hours === 10 && SPECIAL_10HR[state.languages] && SPECIAL_10HR[state.languages][state.users]) {
-      hourlyRate = SPECIAL_10HR[state.languages][state.users];
+    if (state.users === 10000) {
+      // Use fixed bracket rates for 10k tier
+      const bracket = get10kBracket(state.hours);
+      const tierRates = RATES_10K[state.languages];
+      if (tierRates) {
+        hourlyRate = tierRates[bracket];
+        baseRate = hourlyRate;
+        discount = 0; // rates are already final
+      } else {
+        // captions at 10k — no rate defined, treat as contact
+        return { contact: true };
+      }
     } else {
-      hourlyRate = baseRate * (1 - discount);
+      baseRate = RATES[state.languages][state.users];
+      discount = volumeDiscount(state.hours);
+
+      // Special: two_lang + up-to-50 at 10–24 hrs = $95/hr (list rate for that bracket)
+      // At 25+ hrs it reverts to the $75 base minus the relevant volume discount
+      if (state.hours < 25 && SPECIAL_10HR[state.languages] && SPECIAL_10HR[state.languages][state.users]) {
+        hourlyRate = SPECIAL_10HR[state.languages][state.users];
+        discount = 0;
+      } else if (state.hours < 25) {
+        // No volume discount for < 25 hrs; use base rate
+        hourlyRate = baseRate;
+        discount = 0;
+      } else {
+        hourlyRate = baseRate * (1 - discount);
+      }
     }
 
     const translation = hourlyRate * state.hours;
@@ -1126,6 +1138,21 @@
 
   // ---------- RENDER ----------
   function render() {
+    // If typed value is below minimum, pause calculation and show warning state
+    if (state.belowMin) {
+      document.getElementById('summary-card').classList.remove('contact-mode');
+      document.getElementById('sum-rate').textContent = '—';
+      document.getElementById('sum-vol-disc').textContent = '—';
+      document.getElementById('sum-translation').textContent = '—';
+      document.getElementById('sum-total').textContent = '—';
+      document.getElementById('per-hour-line').style.display = 'none';
+      document.getElementById('row-onboarding').style.display = 'none';
+      document.getElementById('row-glossary').style.display = 'none';
+      document.getElementById('row-onsite').style.display = 'none';
+      document.getElementById('row-nonprofit').style.display = 'none';
+      return;
+    }
+
     const r = calculate();
     const card = document.getElementById('summary-card');
 
@@ -1154,12 +1181,17 @@
     card.classList.remove('contact-mode');
 
     // Rate row
-    const isSpecial10 = (state.hours === 10 && state.languages === 'two_lang' && state.users === 50);
+    const isSpecialBracket = (state.hours < 25 && state.languages === 'two_lang' && state.users === 50);
     document.getElementById('sum-rate').textContent = `${fmtRate(r.hourlyRate)}/hr`;
-    if (r.discount > 0) {
+
+    if (state.users === 10000) {
+      const bracket = get10kBracket(state.hours);
+      const bracketLabel = bracket === 10 ? '10–24 hrs' : `${bracket} hrs`;
+      document.getElementById('sum-vol-disc').textContent = `10k tier · ${bracketLabel} rate`;
+    } else if (r.discount > 0) {
       document.getElementById('sum-vol-disc').textContent = `−${Math.round(r.discount*100)}% off ${fmtRate(r.baseRate)}`;
-    } else if (isSpecial10) {
-      document.getElementById('sum-vol-disc').textContent = `10-hr starter rate`;
+    } else if (isSpecialBracket) {
+      document.getElementById('sum-vol-disc').textContent = `10–24 hr list rate`;
     } else {
       document.getElementById('sum-vol-disc').textContent = `List rate`;
     }
@@ -1191,7 +1223,7 @@
     // Total
     document.getElementById('sum-total').textContent = fmt(r.total);
 
-    // Effective per-hour (if there are addons or discounts)
+    // Effective per-hour
     const hasExtras = r.onboarding || r.glossary || r.onsite || r.npDiscount;
     if (hasExtras && state.hours > 0) {
       document.getElementById('per-hour-line').style.display = '';
